@@ -1,0 +1,930 @@
+<Window x:Class="GroundStation.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:GroundStation.ViewModels"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:gmap="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
+        mc:Ignorable="d"
+        Title="AKAY FOF - Ground Station" 
+        Height="900" Width="1440"
+        Background="#080808"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <vm:MainWindowViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <!-- Base Styles -->
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="Foreground" Value="#E0E0E0" />
+        </Style>
+        
+        <Style x:Key="BigHeader" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="22" />
+        </Style>
+
+        <Style x:Key="SubHeader" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Foreground" Value="#888C94" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="MetricLabelText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Foreground" Value="#B0B4BC" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="MetricValueText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontFamily" Value="Consolas" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+
+        <Style x:Key="IdText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="Foreground" Value="#555A64" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontFamily" Value="Consolas" />
+        </Style>
+        
+        <!-- Panel Borders -->
+        <Style x:Key="PanelBorder" TargetType="Border">
+            <Setter Property="BorderBrush" Value="#222222" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="#121212" />
+            <Setter Property="Margin" Value="4" />
+            <Setter Property="Padding" Value="12" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+
+        <!-- Button Style -->
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="BorderBrush" Value="#333333"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#252525"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="#1C1E23"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+            <Setter Property="BorderBrush" Value="#353840"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+        </Style>
+
+        <!-- Modern Thin ScrollBar Style -->
+        <Style TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid x:Name="Bg" SnapsToDevicePixels="true" Background="Transparent">
+                            <Track x:Name="PART_Track" IsDirectionReversed="true">
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Border Background="#333333" CornerRadius="3" Margin="1" />
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter Property="Width" Value="Auto" />
+                                <Setter Property="Height" Value="8" />
+                                <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="False" />
+                            </Trigger>
+                            <Trigger Property="Orientation" Value="Vertical">
+                                <Setter Property="Width" Value="8" />
+                                <Setter Property="Height" Value="Auto" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45" /> <!-- Header -->
+            <RowDefinition Height="*" />  <!-- Main Content -->
+            <RowDefinition Height="30" /> <!-- Footer -->
+        </Grid.RowDefinitions>
+
+        <!-- ==================== HEADER ==================== -->
+        <Border Grid.Row="0" Background="#0C0C0C" BorderBrush="#1C1C1C" BorderThickness="0,0,0,1">
+            <Grid Margin="15,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="AKAY FOF" Foreground="#FFFFFF" FontWeight="Bold" FontSize="18" Margin="0,0,15,0" />
+                    <Border Background="#25272D" CornerRadius="3" Padding="6,2" VerticalAlignment="Center">
+                        <TextBlock Text="V.2.4.0-STABLE" Foreground="#888C94" FontSize="10" FontFamily="Consolas"/>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Border BorderBrush="#66B2FF" BorderThickness="0,0,0,2" Margin="0,0,30,0" Padding="0,0,0,4">
+                        <TextBlock Text="MISSION STATUS" Foreground="#66B2FF" FontWeight="Bold" FontSize="12" />
+                    </Border>
+                    <TextBlock Text="TEAM ID: " Foreground="#888C94" FontSize="12" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding TeamId}" FontWeight="Bold" Foreground="#FFFFFF" FontSize="12" Margin="0,0,30,0"/>
+                    <TextBlock Text="PACKET: " Foreground="#888C94" FontSize="12" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding PacketNumber}" FontWeight="Bold" Foreground="#FFFFFF" FontSize="12" Margin="0,0,30,0"/>
+                    <TextBlock Text="CLOCK: " Foreground="#888C94" FontSize="12" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding TelemetryTimestamp, StringFormat={}{0:HH:mm:ss}Z}" FontFamily="Consolas" FontWeight="Bold" FontSize="12" Foreground="#FFFFFF"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                    <Button Command="{Binding OpenLogsCommand}" Background="Transparent" BorderThickness="0" Margin="10,0" ToolTip="Open Logs Folder">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📂" Foreground="#A0A0A0" FontSize="14" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="OPEN LOGS" Foreground="#A0A0A0" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <TextBlock Text="🔔" Foreground="#A0A0A0" FontSize="16" Margin="10,0"/>
+                    <TextBlock Text="⚙" Foreground="#A0A0A0" FontSize="16" Margin="10,0"/>
+                    <TextBlock Text="👤" Foreground="#A0A0A0" FontSize="16" Margin="10,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="340" /> <!-- LEFT PANEL -->
+                <ColumnDefinition Width="*" />   <!-- CENTER PANEL -->
+                <ColumnDefinition Width="400" /> <!-- RIGHT PANEL -->
+            </Grid.ColumnDefinitions>
+
+            <!-- ==================== LEFT PANEL ==================== -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Style="{StaticResource PanelBorder}">
+                    <StackPanel>
+                        <TextBlock Text="COMMUNICATION LINK" Style="{StaticResource SubHeader}" FontSize="11" Margin="0,0,0,5"/>
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Background="#111215" BorderBrush="#2A2C33" BorderThickness="1" Margin="0,0,5,0" Padding="4">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock Text="RX" Foreground="#555A64" FontSize="11" FontWeight="Bold" Margin="0,0,10,0"/>
+                                    <Ellipse Width="8" Height="8">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="#333"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RxActive}" Value="True">
+                                                        <Setter Property="Fill" Value="#00FF41"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="1" Background="#111215" BorderBrush="#2A2C33" BorderThickness="1" Margin="5,0,0,0" Padding="4">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock Text="TX" Foreground="#555A64" FontSize="11" FontWeight="Bold" Margin="0,0,10,0"/>
+                                    <Ellipse Width="8" Height="8">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="#333"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding TxActive}" Value="True">
+                                                        <Setter Property="Fill" Value="#FFB300"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                        
+                        <Grid Margin="0,0,0,5"> <!-- COM and Baud settings -->
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedPort}" Margin="0,0,5,0" Padding="2" Background="White" Foreground="Black" TextElement.Foreground="Black" FontSize="11">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" Foreground="Black" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableBaudRates}" SelectedItem="{Binding SelectedBaudRate}" Margin="5,0,0,0" Padding="2" Background="White" Foreground="Black" TextElement.Foreground="Black" FontSize="11">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" Foreground="Black" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </Grid>
+                        
+                        <Button Content="{Binding ConnectionButtonText, FallbackValue=ESTABLISH LINK}" Command="{Binding ToggleConnectionCommand}" Height="25" FontSize="11" Margin="0,0,0,5">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                            <Setter Property="Background" Value="#1C1E23"/>
+                                            <Setter Property="BorderBrush" Value="#FF5555"/>
+                                            <Setter Property="Foreground" Value="#FF5555"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="START SIMULATION" Command="{Binding ToggleSimulationCommand}" Height="35" FontSize="13">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Setter Property="Foreground" Value="#00FF41"/>
+                                    <Setter Property="BorderBrush" Value="#00FF41"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSimulating}" Value="True">
+                                            <Setter Property="Content" Value="STOP SIMULATION"/>
+                                            <Setter Property="Foreground" Value="#FFB300"/>
+                                            <Setter Property="BorderBrush" Value="#FFB300"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="1" Style="{StaticResource PanelBorder}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <Grid Grid.Row="0" Margin="0,0,0,15">
+                            <TextBlock Text="REFEREE DATA&#x0a;[ACTIVE]" Style="{StaticResource BigHeader}" FontSize="14" LineHeight="18"/>
+                            <Border HorizontalAlignment="Right" Background="#1B1D22" BorderBrush="#353840" BorderThickness="1" Padding="8,4" VerticalAlignment="Top">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="TRANSFER&#x0a;SERVICE: OK" Foreground="#888C94" FontSize="9" TextAlignment="Center" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Grid Grid.Row="1" Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="70"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" Foreground="#555A64" FontSize="10" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="METRIC" Foreground="#555A64" FontSize="10" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="2" Text="STATUS" Foreground="#555A64" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        </Grid>
+                        <Border Grid.Row="1" BorderBrush="#222428" BorderThickness="0,0,0,2" Margin="0,20,0,0"/>
+
+                        <!-- Custom slim ScrollViewer -->
+                        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,10,0,0">
+                                <!-- ROCKET DATA HEADER -->
+                                <Border Background="#1C1E23" Padding="4" Margin="0,5,0,0">
+                                    <TextBlock Text="ROCKET TELEMETRY" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                                </Border>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="01" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="TEAM ID" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding TeamId}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="02" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PACKET COUNTER" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PacketNumber}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="03" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="04" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="05" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="06" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <!-- PAYLOAD DATA HEADER -->
+                                <Border Background="#1C1E23" Padding="4" Margin="0,10,0,0">
+                                    <TextBlock Text="PAYLOAD TELEMETRY" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                                </Border>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="07" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="08" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="09" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <!-- STAGE DATA HEADER -->
+                                <Border Background="#1C1E23" Padding="4" Margin="0,10,0,0">
+                                    <TextBlock Text="STAGE TELEMETRY" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                                </Border>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="10" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="11" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="12" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <!-- SENSOR DATA HEADER -->
+                                <Border Background="#1C1E23" Padding="4" Margin="0,10,0,0">
+                                    <TextBlock Text="IMU &amp; SENSORS" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                                </Border>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="13" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO X" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroX, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="14" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO Y" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroY, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="15" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO Z" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroZ, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="16" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL X" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelX, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="17" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL Y" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelY, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="18" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL Z" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelZ, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="19" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ANGLE (Açı)" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding Angle, StringFormat={}{0:F1}°}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="20" Style="{StaticResource IdText}" Foreground="#FF5555"/><TextBlock Grid.Column="1" Text="STATUS CODE" Style="{StaticResource MetricLabelText}" Foreground="#FF5555"/><TextBlock Grid.Column="2" Text="{Binding StatusCode, StringFormat=0x{0:X2}}" Style="{StaticResource MetricValueText}" Foreground="#FF5555"/>
+                                </Grid>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="21" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="CHECKSUM" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding IntegrityCode}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+
+                <!-- Flight State Tracker -->
+                <Border Grid.Row="2" Style="{StaticResource PanelBorder}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="FLIGHT STATE TRACKING" Foreground="#555A64" FontSize="10" FontWeight="Bold" Margin="0,0,0,10"/>
+                        
+                        <StackPanel Grid.Row="1">
+                            <StackPanel.Resources>
+                                <Style TargetType="Ellipse" x:Key="StateDot">
+                                    <Setter Property="Width" Value="10"/>
+                                    <Setter Property="Height" Value="10"/>
+                                    <Setter Property="Margin" Value="0,0,10,0"/>
+                                    <Setter Property="Fill" Value="#2A2D35"/>
+                                </Style>
+                                <Style TargetType="TextBlock" x:Key="StateText">
+                                    <Setter Property="Foreground" Value="#555A64"/>
+                                    <Setter Property="FontSize" Value="11"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </StackPanel.Resources>
+
+                            <!-- UÇUŞA HAZIR -->
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <Ellipse>
+                                    <Ellipse.Style>
+                                        <Style TargetType="Ellipse" BasedOn="{StaticResource StateDot}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStateReady}" Value="True">
+                                                    <Setter Property="Fill" Value="#00FF41"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Ellipse.Style>
+                                </Ellipse>
+                                <TextBlock Text="UÇUŞA HAZIR (READY)">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource StateText}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStateReady}" Value="True">
+                                                    <Setter Property="Foreground" Value="#E0E0E0"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!-- YÜKSELME -->
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <Ellipse>
+                                    <Ellipse.Style>
+                                        <Style TargetType="Ellipse" BasedOn="{StaticResource StateDot}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStateAscent}" Value="True">
+                                                    <Setter Property="Fill" Value="#00FF41"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Ellipse.Style>
+                                </Ellipse>
+                                <TextBlock Text="YÜKSELME (ASCENT)">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource StateText}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStateAscent}" Value="True">
+                                                    <Setter Property="Foreground" Value="#E0E0E0"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!-- APOGEE -->
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <Ellipse>
+                                    <Ellipse.Style>
+                                        <Style TargetType="Ellipse" BasedOn="{StaticResource StateDot}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStateApogee}" Value="True">
+                                                    <Setter Property="Fill" Value="#00FF41"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Ellipse.Style>
+                                </Ellipse>
+                                <TextBlock Text="APOGEE (TEPE NOKTASI)">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource StateText}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStateApogee}" Value="True">
+                                                    <Setter Property="Foreground" Value="#E0E0E0"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!-- 1. PARAŞÜT -->
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <Ellipse>
+                                    <Ellipse.Style>
+                                        <Style TargetType="Ellipse" BasedOn="{StaticResource StateDot}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStatePara1}" Value="True">
+                                                    <Setter Property="Fill" Value="#00FF41"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Ellipse.Style>
+                                </Ellipse>
+                                <TextBlock Text="1. PARAŞÜT (DROGUE)">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource StateText}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStatePara1}" Value="True">
+                                                    <Setter Property="Foreground" Value="#E0E0E0"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!-- 2. PARAŞÜT -->
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <Ellipse>
+                                    <Ellipse.Style>
+                                        <Style TargetType="Ellipse" BasedOn="{StaticResource StateDot}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStatePara2}" Value="True">
+                                                    <Setter Property="Fill" Value="#00FF41"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Ellipse.Style>
+                                </Ellipse>
+                                <TextBlock Text="2. PARAŞÜT (MAIN)">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource StateText}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStatePara2}" Value="True">
+                                                    <Setter Property="Foreground" Value="#E0E0E0"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!-- YERDE -->
+                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                <Ellipse>
+                                    <Ellipse.Style>
+                                        <Style TargetType="Ellipse" BasedOn="{StaticResource StateDot}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStateLanded}" Value="True">
+                                                    <Setter Property="Fill" Value="#00FF41"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Ellipse.Style>
+                                </Ellipse>
+                                <TextBlock Text="KURTARMA (LANDED)">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource StateText}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStateLanded}" Value="True">
+                                                    <Setter Property="Foreground" Value="#E0E0E0"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- ==================== CENTER PANEL ==================== -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1.2*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+
+                <!-- LIVE TELEMETRY / ALTITUDE PLOT -->
+                <Border Grid.Row="0" Style="{StaticResource PanelBorder}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="LIVE TELEMETRY" Style="{StaticResource SubHeader}"/>
+                                <TextBlock Text="ALTITUDE AGL" Style="{StaticResource BigHeader}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                <TextBlock Text="{Binding RocketAltitude, StringFormat={}{0:F0}}" Foreground="#FFFFFF" FontSize="46" FontWeight="Bold" FontFamily="Consolas" Margin="0,0,8,0"/>
+                                <TextBlock Text="METERS" Foreground="#888C94" FontSize="12" FontWeight="Bold" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
+                            </StackPanel>
+                        </Grid>
+                        
+                        <Grid Grid.Row="1">
+                            <!-- Legend -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0" Panel.ZIndex="1">
+                                <Ellipse Width="6" Height="6" Fill="#A2B4C7" Margin="0,0,6,0"/>
+                                <TextBlock Text="ROCKET PRIMARY" Foreground="#888C94" FontSize="10" FontWeight="Bold" Margin="0,0,20,0"/>
+                                <Ellipse Width="6" Height="6" Fill="#D09B59" Margin="0,0,6,0"/>
+                                <TextBlock Text="TARGET APC" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                            </StackPanel>
+
+                            <lvc:CartesianChart Series="{Binding AltitudeSeries}" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
+                                <lvc:CartesianChart.AxisY>
+                                    <lvc:Axis Title="" MinValue="0" Foreground="#555A64" FontSize="11" LabelFormatter="{Binding YFormatter}">
+                                        <lvc:Axis.Separator>
+                                            <lvc:Separator StrokeThickness="1" Stroke="#1B1D22" />
+                                        </lvc:Axis.Separator>
+                                    </lvc:Axis>
+                                </lvc:CartesianChart.AxisY>
+                                <lvc:CartesianChart.AxisX>
+                                    <lvc:Axis ShowLabels="False">
+                                        <lvc:Axis.Separator>
+                                            <lvc:Separator StrokeThickness="1" Stroke="#1B1D22" />
+                                        </lvc:Axis.Separator>
+                                    </lvc:Axis>
+                                </lvc:CartesianChart.AxisX>
+                            </lvc:CartesianChart>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- GEOSPATIAL TRACKING -->
+                <Border Grid.Row="1" Style="{StaticResource PanelBorder}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                            <TextBlock Text="GEOSPATIAL TRACKING" Style="{StaticResource SubHeader}"/>
+                            <TextBlock Text="DUAL-UNIT TRAJECTORY" Style="{StaticResource BigHeader}"/>
+                        </StackPanel>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" BorderBrush="#222222" BorderThickness="1" CornerRadius="6" Margin="0,0,6,0" Background="#121212">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Border Grid.Row="0" Padding="10,6">
+                                        <Grid>
+                                            <TextBlock Text="ROCKET GPS TRACKING" Foreground="#A2B4C7" FontWeight="Bold" FontSize="10" VerticalAlignment="Center"/>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <CheckBox Content="AUTO-FOLLOW" IsChecked="{Binding IsAutoFollowEnabled}" Foreground="#888C94" FontSize="9" FontWeight="Bold" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="🔍" Foreground="#555A64" FontSize="12" Margin="0,0,10,0"/>
+                                                <TextBlock Text="⛶" Foreground="#555A64" FontSize="12"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    <Grid Grid.Row="1">
+                                        <gmap:GMapControl x:Name="RocketMap" MinZoom="2" MaxZoom="22" Zoom="15" MouseWheelZoomType="MousePositionAndCenter" CanDragMap="True" />
+                                        
+                                        <!-- Fake Crosshair overlay -->
+                                        <Line X1="0" Y1="1000" X2="2000" Y2="1000" Stroke="#22000000" StrokeThickness="1" IsHitTestVisible="False"/>
+                                        <Line X1="1000" Y1="0" X2="1000" Y2="2000" Stroke="#22000000" StrokeThickness="1" IsHitTestVisible="False"/>
+                                    </Grid>
+                                    <!-- Coordinate overlay -->
+                                    <Border Grid.Row="2" Padding="10,6" BorderBrush="#222428" BorderThickness="0,1,0,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="LAT" Foreground="#555A64" FontSize="9" FontWeight="Bold"/>
+                                                <TextBlock Text="LONG" Foreground="#555A64" FontSize="9" FontWeight="Bold"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Margin="15,0,0,0">
+                                                <TextBlock Text="{Binding RocketLatitude, StringFormat={}{0:F4}° N}" Foreground="#E0E0E0" FontSize="10" FontWeight="Bold" FontFamily="Consolas"/>
+                                                <TextBlock Text="{Binding RocketLongitude, StringFormat={}{0:F4}° E}" Foreground="#E0E0E0" FontSize="10" FontWeight="Bold" FontFamily="Consolas"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Column="1" BorderBrush="#222222" BorderThickness="1" CornerRadius="6" Margin="6,0,0,0" Background="#121212">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Border Grid.Row="0" Padding="10,6">
+                                        <Grid>
+                                            <TextBlock Text="PAYLOAD GPS TRACKING" Foreground="#D09B59" FontWeight="Bold" FontSize="10" VerticalAlignment="Center"/>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <TextBlock Text="DIST: " Foreground="#555A64" FontSize="9" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding PayloadDistance, StringFormat={}{0:F0}m}" Foreground="#00FF41" FontSize="10" FontWeight="Bold" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="🔍" Foreground="#555A64" FontSize="12" Margin="0,0,10,0"/>
+                                                <TextBlock Text="⛶" Foreground="#555A64" FontSize="12"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    <Grid Grid.Row="1">
+                                        <gmap:GMapControl x:Name="PayloadMap" MinZoom="2" MaxZoom="22" Zoom="15" MouseWheelZoomType="MousePositionAndCenter" CanDragMap="True" />
+                                    </Grid>
+                                    <!-- Coordinate overlay -->
+                                    <Border Grid.Row="2" Padding="10,6" BorderBrush="#222428" BorderThickness="0,1,0,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="LAT" Foreground="#555A64" FontSize="9" FontWeight="Bold"/>
+                                                <TextBlock Text="LONG" Foreground="#555A64" FontSize="9" FontWeight="Bold"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Margin="15,0,0,0">
+                                                <TextBlock Text="{Binding PayloadLatitude, StringFormat={}{0:F4}° N}" Foreground="#E0E0E0" FontSize="10" FontWeight="Bold" FontFamily="Consolas"/>
+                                                <TextBlock Text="{Binding PayloadLongitude, StringFormat={}{0:F4}° E}" Foreground="#E0E0E0" FontSize="10" FontWeight="Bold" FontFamily="Consolas"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- ==================== RIGHT PANEL ==================== -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="130"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Style="{StaticResource PanelBorder}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                            <TextBlock Text="TELEMETRY STREAM" Style="{StaticResource SubHeader}"/>
+                            <TextBlock Text="SYSTEM TELEMETRY" Style="{StaticResource BigHeader}"/>
+                        </StackPanel>
+
+                        <Grid Grid.Row="1" Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" Foreground="#555A64" FontSize="10" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="METRIC" Foreground="#555A64" FontSize="10" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="2" Text="VALUE" Foreground="#555A64" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                        </Grid>
+                        <Border Grid.Row="1" BorderBrush="#222428" BorderThickness="0,0,0,2" Margin="0,20,0,0"/>
+
+                        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,10,0,0">
+                                <!-- Telemetry Stream list -->
+                                <!-- Telemetry Stream list -->
+                                <!-- ROCKET DATA HEADER -->
+                                <Border Background="#1C1E23" Padding="4" Margin="0,5,0,0">
+                                    <TextBlock Text="ROCKET TELEMETRY" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                                </Border>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="01" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="TEAM ID (Kimlik)" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding TeamId}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="02" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PACKET COUNTER (Sayaç)" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PacketNumber}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="03" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET ALT (Barometric)" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="04" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="05" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="06" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <!-- PAYLOAD DATA HEADER -->
+                                <Border Background="#1C1E23" Padding="4" Margin="0,10,0,0">
+                                    <TextBlock Text="PAYLOAD TELEMETRY" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                                </Border>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="07" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="08" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="09" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <!-- STAGE DATA HEADER -->
+                                <Border Background="#1C1E23" Padding="4" Margin="0,10,0,0">
+                                    <TextBlock Text="STAGE TELEMETRY" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                                </Border>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="10" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="11" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="12" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <!-- SENSOR DATA HEADER -->
+                                <Border Background="#1C1E23" Padding="4" Margin="0,10,0,0">
+                                    <TextBlock Text="IMU &amp; SENSORS" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                                </Border>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="13" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO X" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroX, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="14" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO Y" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroY, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="15" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO Z" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroZ, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="16" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL X" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelX, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="17" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL Y" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelY, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="18" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL Z" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelZ, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="19" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ANGLE (Açı)" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding Angle, StringFormat={}{0:F1}°}" Style="{StaticResource MetricValueText}"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="20" Style="{StaticResource IdText}" Foreground="#FF5555"/><TextBlock Grid.Column="1" Text="STATUS CODE (Durum Kodu)" Style="{StaticResource MetricLabelText}" Foreground="#FF5555"/><TextBlock Grid.Column="2" Text="{Binding StatusCode, StringFormat=0x{0:X2}}" Style="{StaticResource MetricValueText}" Foreground="#FF5555"/>
+                                </Grid><Border Height="1" Background="#1B1D22"/>
+                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="21" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="CHECKSUM (CRC/MD5)" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding IntegrityCode}" Style="{StaticResource MetricValueText}"/>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+
+                <!-- Mission Console -->
+                <Border Grid.Row="1" Style="{StaticResource PanelBorder}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <TextBlock Text="MISSION CONSOLE" Foreground="#555A64" FontSize="10" FontWeight="Bold" />
+                        </Grid>
+                        
+                        <TextBox Grid.Row="1" Text="{Binding ConsoleLogs, Mode=OneWay}" 
+                                 Background="#0E0F12" Foreground="#888C94" FontSize="11" FontFamily="Consolas"
+                                 IsReadOnly="True" BorderThickness="1" BorderBrush="#222428" VerticalScrollBarVisibility="Auto" Padding="8" />
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- ==================== FOOTER ==================== -->
+        <Border Grid.Row="2" Background="#15161A" BorderBrush="#222428" BorderThickness="0,1,0,0">
+            <Grid Margin="15,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="AKAY FOF" Foreground="#E0E0E0" FontWeight="Bold" FontSize="11" Margin="0,0,15,0" />
+                    <TextBlock Text="|" Foreground="#353840" Margin="0,0,15,0"/>
+                    <TextBlock Text="CRC: OK" Foreground="#888C94" FontSize="10" FontWeight="Bold" Margin="0,0,20,0"/>
+                    <TextBlock Text="MD5: VERIFIED" Foreground="#888C94" FontSize="10" FontWeight="Bold" Margin="0,0,20,0"/>
+                    <TextBlock Text="SYSTEM: NOMINAL" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                </StackPanel>
+                
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="LOGS" Foreground="#555A64" FontSize="10" FontWeight="Bold" Margin="0,0,20,0"/>
+                    <TextBlock Text="DIAGNOSTICS" Foreground="#555A64" FontSize="10" FontWeight="Bold" Margin="0,0,20,0"/>
+                    <TextBlock Text="HELP" Foreground="#555A64" FontSize="10" FontWeight="Bold"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>
