@@ -884,7 +884,7 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             
-                            <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                            <StackPanel Grid.Row="0" Margin="0,0,0,2">
                                 <TextBlock Text="SYSTEM TELEMETRY - PAYLOAD" Style="{StaticResource BigHeader}" FontSize="16" Foreground="#FFB300"/>
                             </StackPanel>
 
@@ -900,24 +900,24 @@
                             </Grid>
                             <Border Grid.Row="1" BorderBrush="#222428" BorderThickness="0,0,0,2" Margin="0,20,0,0"/>
 
-                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-                                <StackPanel Margin="0,10,0,0">
-                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden">
+                                <StackPanel Margin="0,5,0,0">
+                                    <Grid Margin="0,4"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" Text="07" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
                                     </Grid><Border Height="1" Background="#1B1D22"/>
-                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <Grid Margin="0,4"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" Text="08" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
                                     </Grid><Border Height="1" Background="#1B1D22"/>
-                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <Grid Margin="0,4"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" Text="09" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
                                     </Grid><Border Height="1" Background="#1B1D22"/>
-                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <Grid Margin="0,4"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" Text="P1" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PRESSURE" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadPressure, StringFormat={}{0:F2} hPa}" Style="{StaticResource MetricValueText}"/>
                                     </Grid><Border Height="1" Background="#1B1D22"/>
-                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <Grid Margin="0,4"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" Text="P2" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="DENSITY" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadDensity, StringFormat={}{0:F3} kg/m³}" Style="{StaticResource MetricValueText}"/>
                                     </Grid><Border Height="1" Background="#1B1D22"/>
-                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                    <Grid Margin="0,4"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" Text="P3" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="TEMPERATURE" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadTemperature, StringFormat={}{0:F1} °C}" Style="{StaticResource MetricValueText}"/>
                                     </Grid>
                                 </StackPanel>
