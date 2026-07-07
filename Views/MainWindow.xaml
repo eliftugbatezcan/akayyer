@@ -141,7 +141,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="45" /> <!-- Header -->
             <RowDefinition Height="*" />  <!-- Main Content -->
-            <RowDefinition Height="30" /> <!-- Footer -->
+            <RowDefinition Height="0" /> <!-- Footer -->
         </Grid.RowDefinitions>
 
         <!-- ==================== HEADER ==================== -->
@@ -251,14 +251,23 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <ComboBox Grid.Column="0" ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedPort}" Margin="0,0,5,0" Padding="2" Background="White" Foreground="Black" TextElement.Foreground="Black" FontSize="11">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding}" Foreground="Black" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                            <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableBaudRates}" SelectedItem="{Binding SelectedBaudRate}" Margin="5,0,0,0" Padding="2" Background="White" Foreground="Black" TextElement.Foreground="Black" FontSize="11">
+                            <Grid Grid.Column="0" Margin="0,0,5,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox Grid.Column="0" ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedPort}" Padding="2" Background="White" Foreground="Black" TextElement.Foreground="Black" FontSize="11">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" Foreground="Black" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <Button Grid.Column="1" Command="{Binding RefreshPortsCommand}" ToolTip="Portları Yenile" Background="#1C1E23" BorderBrush="#353840" Width="20" Margin="2,0,0,0">
+                                    <TextBlock Text="🔄" FontSize="10" Foreground="#888C94" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Button>
+                            </Grid>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding AvailableBaudRates}" SelectedItem="{Binding SelectedBaudRate}" Padding="2" Background="White" Foreground="Black" TextElement.Foreground="Black" FontSize="11">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding}" Foreground="Black" />
@@ -662,9 +671,9 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                        <StackPanel Grid.Row="0" Margin="0,0,0,5">
                             <TextBlock Text="GEOSPATIAL TRACKING" Style="{StaticResource SubHeader}"/>
-                            <TextBlock Text="DUAL-UNIT TRAJECTORY" Style="{StaticResource BigHeader}"/>
+                            <TextBlock Text="DUAL-UNIT TRAJECTORY" Style="{StaticResource BigHeader}" FontSize="16"/>
                         </StackPanel>
 
                         <Grid Grid.Row="1">
@@ -769,118 +778,153 @@
                     <RowDefinition Height="130"/>
                 </Grid.RowDefinitions>
 
-                <Border Grid.Row="0" Style="{StaticResource PanelBorder}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        
-                        <StackPanel Grid.Row="0" Margin="0,0,0,15">
-                            <TextBlock Text="TELEMETRY STREAM" Style="{StaticResource SubHeader}"/>
-                            <TextBlock Text="SYSTEM TELEMETRY" Style="{StaticResource BigHeader}"/>
-                        </StackPanel>
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2.5*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
 
-                        <Grid Grid.Row="1" Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="30"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="100"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="ID" Foreground="#555A64" FontSize="10" FontWeight="Bold"/>
-                            <TextBlock Grid.Column="1" Text="METRIC" Foreground="#555A64" FontSize="10" FontWeight="Bold"/>
-                            <TextBlock Grid.Column="2" Text="VALUE" Foreground="#555A64" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
-                        </Grid>
-                        <Border Grid.Row="1" BorderBrush="#222428" BorderThickness="0,0,0,2" Margin="0,20,0,0"/>
-
-                        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-                            <StackPanel Margin="0,10,0,0">
-                                <!-- Telemetry Stream list -->
-                                <!-- Telemetry Stream list -->
-                                <!-- ROCKET DATA HEADER -->
-                                <Border Background="#1C1E23" Padding="4" Margin="0,5,0,0">
-                                    <TextBlock Text="ROCKET TELEMETRY" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
-                                </Border>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="01" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="TEAM ID (Kimlik)" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding TeamId}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="02" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PACKET COUNTER (Sayaç)" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PacketNumber}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="03" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET ALT (Barometric)" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="04" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="05" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="06" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <!-- PAYLOAD DATA HEADER -->
-                                <Border Background="#1C1E23" Padding="4" Margin="0,10,0,0">
-                                    <TextBlock Text="PAYLOAD TELEMETRY" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
-                                </Border>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="07" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="08" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="09" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <!-- STAGE DATA HEADER -->
-                                <Border Background="#1C1E23" Padding="4" Margin="0,10,0,0">
-                                    <TextBlock Text="STAGE TELEMETRY" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
-                                </Border>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="10" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="11" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="12" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <!-- SENSOR DATA HEADER -->
-                                <Border Background="#1C1E23" Padding="4" Margin="0,10,0,0">
-                                    <TextBlock Text="IMU &amp; SENSORS" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
-                                </Border>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="13" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO X" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroX, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="14" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO Y" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroY, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="15" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO Z" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroZ, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="16" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL X" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelX, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="17" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL Y" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelY, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="18" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL Z" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelZ, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="19" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ANGLE (Açı)" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding Angle, StringFormat={}{0:F1}°}" Style="{StaticResource MetricValueText}"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="20" Style="{StaticResource IdText}" Foreground="#FF5555"/><TextBlock Grid.Column="1" Text="STATUS CODE (Durum Kodu)" Style="{StaticResource MetricLabelText}" Foreground="#FF5555"/><TextBlock Grid.Column="2" Text="{Binding StatusCode, StringFormat=0x{0:X2}}" Style="{StaticResource MetricValueText}" Foreground="#FF5555"/>
-                                </Grid><Border Height="1" Background="#1B1D22"/>
-                                <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="21" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="CHECKSUM (CRC/MD5)" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding IntegrityCode}" Style="{StaticResource MetricValueText}"/>
-                                </Grid>
+                    <Border Grid.Row="0" Style="{StaticResource PanelBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                                <TextBlock Text="TELEMETRY STREAM" Style="{StaticResource SubHeader}"/>
+                                <TextBlock Text="SYSTEM TELEMETRY - ROCKET" Style="{StaticResource BigHeader}" FontSize="16"/>
                             </StackPanel>
-                        </ScrollViewer>
-                    </Grid>
-                </Border>
+
+                            <Grid Grid.Row="1" Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="100"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="ID" Foreground="#555A64" FontSize="10" FontWeight="Bold"/>
+                                <TextBlock Grid.Column="1" Text="METRIC" Foreground="#555A64" FontSize="10" FontWeight="Bold"/>
+                                <TextBlock Grid.Column="2" Text="VALUE" Foreground="#555A64" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Border Grid.Row="1" BorderBrush="#222428" BorderThickness="0,0,0,2" Margin="0,20,0,0"/>
+
+                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="0,10,0,0">
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="01" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="TEAM ID" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding TeamId}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="02" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PACKET COUNTER" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PacketNumber}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="03" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="04" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="05" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="06" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ROCKET LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding RocketLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Border Background="#1C1E23" Padding="4" Margin="0,10,0,0">
+                                        <TextBlock Text="STAGE TELEMETRY" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                                    </Border>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="10" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="11" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="12" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="STAGE LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding StageLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Border Background="#1C1E23" Padding="4" Margin="0,10,0,0">
+                                        <TextBlock Text="IMU &amp; SENSORS" Foreground="#888C94" FontSize="10" FontWeight="Bold"/>
+                                    </Border>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="13" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO X" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroX, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="14" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO Y" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroY, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="15" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="GYRO Z" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding GyroZ, StringFormat={}{0:F2}°/s}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="16" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL X" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelX, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="17" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL Y" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelY, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="18" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ACCEL Z" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding AccelZ, StringFormat={}{0:F2}g}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="19" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="ANGLE" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding Angle, StringFormat={}{0:F1}°}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="20" Style="{StaticResource IdText}" Foreground="#FF5555"/><TextBlock Grid.Column="1" Text="STATUS CODE" Style="{StaticResource MetricLabelText}" Foreground="#FF5555"/><TextBlock Grid.Column="2" Text="{Binding StatusCode, StringFormat=0x{0:X2}}" Style="{StaticResource MetricValueText}" Foreground="#FF5555"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="21" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="CHECKSUM" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding IntegrityCode}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                    
+                    <Border Grid.Row="1" Style="{StaticResource PanelBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            
+                            <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                                <TextBlock Text="SYSTEM TELEMETRY - PAYLOAD" Style="{StaticResource BigHeader}" FontSize="16" Foreground="#FFB300"/>
+                            </StackPanel>
+
+                            <Grid Grid.Row="1" Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="100"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="ID" Foreground="#555A64" FontSize="10" FontWeight="Bold"/>
+                                <TextBlock Grid.Column="1" Text="METRIC" Foreground="#555A64" FontSize="10" FontWeight="Bold"/>
+                                <TextBlock Grid.Column="2" Text="VALUE" Foreground="#555A64" FontSize="10" FontWeight="Bold" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Border Grid.Row="1" BorderBrush="#222428" BorderThickness="0,0,0,2" Margin="0,20,0,0"/>
+
+                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="0,10,0,0">
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="07" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD GPS ALT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadGpsAltitude, StringFormat={}{0:F1}m}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="08" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD LAT" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadLatitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="09" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PAYLOAD LON" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadLongitude, StringFormat={}{0:F5}}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="P1" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="PRESSURE" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadPressure, StringFormat={}{0:F2} hPa}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="P2" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="DENSITY" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadDensity, StringFormat={}{0:F3} kg/m³}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid><Border Height="1" Background="#1B1D22"/>
+                                    <Grid Margin="0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="P3" Style="{StaticResource IdText}"/><TextBlock Grid.Column="1" Text="TEMPERATURE" Style="{StaticResource MetricLabelText}"/><TextBlock Grid.Column="2" Text="{Binding PayloadTemperature, StringFormat={}{0:F1} °C}" Style="{StaticResource MetricValueText}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </Grid>
 
                 <!-- Mission Console -->
                 <Border Grid.Row="1" Style="{StaticResource PanelBorder}">

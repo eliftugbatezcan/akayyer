@@ -38,7 +38,7 @@ namespace GroundStation.Views
                 GMaps.Instance.Mode = AccessMode.ServerAndCache;
                 
                 // --- ROCKET MAP ---
-                RocketMap.MapProvider = GMapProviders.GoogleMap; 
+                RocketMap.MapProvider = GMapProviders.BingHybridMap; 
                 RocketMap.DragButton = System.Windows.Input.MouseButton.Left;
                 RocketMap.ShowCenter = false;
                 RocketMap.Position = new PointLatLng(38.3686, 33.7225);
@@ -57,7 +57,7 @@ namespace GroundStation.Views
                 RocketMap.Markers.Add(_rocketMarker);
 
                 // --- PAYLOAD MAP ---
-                PayloadMap.MapProvider = GMapProviders.GoogleMap; 
+                PayloadMap.MapProvider = GMapProviders.BingHybridMap; 
                 PayloadMap.DragButton = System.Windows.Input.MouseButton.Left;
                 PayloadMap.ShowCenter = false;
                 PayloadMap.Position = new PointLatLng(38.3686, 33.7225);

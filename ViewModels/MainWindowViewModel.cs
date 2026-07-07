@@ -63,6 +63,9 @@ namespace GroundStation.ViewModels
         private double _payloadGpsAltitude;
         private double _payloadLatitude = 38.3686;
         private double _payloadLongitude = 33.7225;
+        private double _payloadPressure = 1013.25;
+        private double _payloadDensity = 1.225;
+        private double _payloadTemperature = 25.0;
         private double _stageGpsAltitude;
         private double _stageLatitude = 38.3686;
         private double _stageLongitude = 33.7225;
@@ -283,6 +286,24 @@ namespace GroundStation.ViewModels
         {
             get => _payloadLongitude;
             set => SetProperty(ref _payloadLongitude, value);
+        }
+
+        public double PayloadPressure
+        {
+            get => _payloadPressure;
+            set => SetProperty(ref _payloadPressure, value);
+        }
+
+        public double PayloadDensity
+        {
+            get => _payloadDensity;
+            set => SetProperty(ref _payloadDensity, value);
+        }
+
+        public double PayloadTemperature
+        {
+            get => _payloadTemperature;
+            set => SetProperty(ref _payloadTemperature, value);
         }
 
         private double _payloadDistance;
@@ -640,6 +661,11 @@ namespace GroundStation.ViewModels
             // Görev yükü ve Kademe GPS
             double payloadGpsAlt = StatusCode >= 3 ? currentAlt * 0.95 : 0;
             double stageGpsAlt = StatusCode >= 4 ? currentAlt * 0.3 : 0;
+
+            // Görev Yükü Ekstra Sensörleri Simülasyonu
+            PayloadPressure = 1013.25 * Math.Exp(-0.00012 * currentAlt) + (_random.NextDouble() - 0.5) * 2;
+            PayloadDensity = 1.225 * Math.Exp(-0.0001 * currentAlt) + (_random.NextDouble() - 0.5) * 0.05;
+            PayloadTemperature = 25.0 - (currentAlt * 0.0065) + (_random.NextDouble() - 0.5);
 
             // Jiroskop ve İvme
             double gyroX = (_random.NextDouble() - 0.5) * 10;
